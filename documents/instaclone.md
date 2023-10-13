@@ -11,14 +11,18 @@ Sinigaglia Gianluca | Backend developer | g.sinigaglia@outlook.it
 
 L'applicazione vuole riproporre le funzionalità principali del social network Instagram.
 
-- Gestione utenti nell'applicazione
-- Gestione login utenti, anche tramite oauth2 (google)
-- Upload e gestione foto (like, thread di commenti)
-- Upload e gestione storie
-- Gestione follower / followed
-- Bacheca utente con feedback dei followed
-- Messaggistica tra utenti
-- Statistiche dell'applicazione (utente admin)
+Lotto 1
+- crud delle entities del db
+
+Lotto 2
+- gestione autorizzazione e autenticazione
+- bacheca utente con feedback dei followed
+- statistiche dell'applicazione (utente admin)
+
+Lotto 3
+- login oauth2 
+- batch che elimini storie dopo 1 giorno
+- url di verifica per login
 
 ## Database
 Postgres 16
