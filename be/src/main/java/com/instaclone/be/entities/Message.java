@@ -16,25 +16,31 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "users_roles")
+@Table(name = "messages")
 @Data
-public class UserRole {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_role_id")
-    private UUID id;
+    @Column(name = "message_id", nullable = false)
+    private UUID messageId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    private User user;
+    @JoinColumn(name = "sender_id", referencedColumnName = "profile_id", nullable = false)
+    private Profile sender;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "role_id")
-    private Role role;
+    @JoinColumn(name = "receiver_id", referencedColumnName = "profile_id", nullable = false)
+    private Profile receiver;
+
+    @Column(name = "message_text", nullable = false)
+    private String messageText;
 
     @CreatedDate
     @Column(name = "insert_timestamp", nullable = false)
     private ZonedDateTime insertTimestamp;
+
+    @Column(name = "update_timestamp")
+    private ZonedDateTime updateTimestamp;
 
 }

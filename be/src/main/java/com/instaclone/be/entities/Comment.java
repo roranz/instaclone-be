@@ -16,25 +16,35 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "users_roles")
+@Table(name = "comments")
 @Data
-public class UserRole {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_role_id")
-    private UUID id;
+    @Column(name = "comment_id", nullable = false)
+    private UUID commentId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    private User user;
+    @JoinColumn(name = "picture_id", referencedColumnName = "picture_id", nullable = false)
+    private Picture picture;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "role_id")
-    private Role role;
+    @JoinColumn(name = "commenter_id", referencedColumnName = "profile_id", nullable = false)
+    private Profile commenter;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_comment_id", referencedColumnName = "comment_id")
+    private Comment parentComment;
+
+    @Column(name = "comment_text", nullable = false)
+    private String commentText;
 
     @CreatedDate
     @Column(name = "insert_timestamp", nullable = false)
     private ZonedDateTime insertTimestamp;
+
+    @Column(name = "update_timestamp")
+    private ZonedDateTime updateTimestamp;
 
 }

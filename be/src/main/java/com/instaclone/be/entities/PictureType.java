@@ -12,34 +12,21 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "users")
 @Data
-public class User {
+@Table(name = "pictures_types")
+public class PictureType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private UUID userId;
+    @Column(name = "picture_type_id")
+    private UUID pictureTypeId;
 
-    @Column(name = "username", unique = true, nullable = false)
-    private String username;
-
-    @Column(name = "email", unique = true, nullable = false)
-    private String email;
-
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    @Column(name = "description", unique = true, nullable = false)
+    private String description;
 
     @CreatedDate
     @Column(name = "insert_timestamp", nullable = false)
@@ -48,10 +35,7 @@ public class User {
     @Column(name = "update_timestamp")
     private ZonedDateTime updateTimestamp;
 
-    @OneToOne(mappedBy = "user")
-    private Profile profile;
-
-    @OneToMany(mappedBy = "user")
-    private Set<UserRole> userRoles;
+    @OneToMany(mappedBy = "pictureType")
+    private Set<Picture> pictures;
     
 }

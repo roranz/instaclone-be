@@ -23,11 +23,6 @@ L'applicazione vuole riproporre le funzionalità principali del social network I
 ## Database
 Postgres 16
 
-Convenzioni suffissi: 
-- _T tabella contentente dati applicativi
-- _R tabella di relazione
-- _D tabella di dominio
-
 ```sql
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -93,7 +88,7 @@ CREATE INDEX idx_profiles_user_id ON profiles (user_id);
 
 CREATE TABLE pictures_types (
     picture_type_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    description VARCHAR(100) NOT NULL,
+    description VARCHAR(100) UNIQUE NOT NULL,
     insert_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

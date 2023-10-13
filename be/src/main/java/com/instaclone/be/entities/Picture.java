@@ -12,48 +12,42 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-@Entity
 @Data
-@Table(name = "profiles")
-public class Profile {
+@Entity
+@Table(name = "pictures")
+public class Picture {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "profile_id")
-    private UUID profileId;
+    @Column(name = "picture_id")
+    private UUID pictureId;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "profile_id", referencedColumnName = "profile_id", nullable = false)
+    private Profile profile;
 
-    @Column(name = "bio")
-    private String bio;
+    @ManyToOne
+    @JoinColumn(name = "picture_type_id", referencedColumnName = "picture_type_id", nullable = false)
+    private PictureType pictureType;
+
+    @Lob
+    @Column(name = "picture_data", columnDefinition = "BYTEA", nullable = false)
+    private byte[] pictureData;
 
     @CreatedDate
     @Column(name = "insert_timestamp", nullable = false)
     private ZonedDateTime insertTimestamp;
 
-    @Column(name = "update_timestamp")
-    private ZonedDateTime updateTimestamp;
-
-    @OneToMany(mappedBy = "profile")
-    private Set<Picture> pictures; 
-
-    @OneToMany(mappedBy = "commenter")
+    @OneToMany(mappedBy = "picture")
     private Set<Comment> comments;
 
-    @OneToMany(mappedBy = "profile")
+    @OneToMany(mappedBy = "picture")
     private Set<Like> likes;
-
-    @OneToMany(mappedBy = "sender")
-    private Set<Message> sentMessages;
-
-    @OneToMany(mappedBy = "receiver")
-    private Set<Message> receivedMessages;
-
+   
 }

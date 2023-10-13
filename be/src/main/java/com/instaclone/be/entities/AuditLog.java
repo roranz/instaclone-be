@@ -3,6 +3,8 @@ package com.instaclone.be.entities;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +34,7 @@ public class AuditLog {
     @Column(name = "record_id", nullable = false)
     private UUID recordId;
 
+    @CreatedDate
     @Column(name = "insert_timestamp", nullable = false)
     private ZonedDateTime insertTimestamp;
 
