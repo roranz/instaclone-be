@@ -14,7 +14,7 @@ public interface UserRoleService {
 
     UserRole create(UserRole userRole);
 
-    UserRole update(UserRole userRole);
+    UserRole update(UUID id, UserRole userRole);
 
     void deleteById(UUID id);
     

@@ -14,7 +14,7 @@ public interface LikeService {
 
     Like create(Like like);
 
-    Like update(Like like);
+    Like update(UUID id, Like like);
 
     void deleteById(UUID id);
     

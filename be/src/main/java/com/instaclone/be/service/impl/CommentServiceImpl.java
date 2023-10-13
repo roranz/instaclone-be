@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment update(Comment comment) {
+    public Comment update(UUID id, Comment comment) {
         return commentRepository.save(comment);
     }
 

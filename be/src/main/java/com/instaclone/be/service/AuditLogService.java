@@ -14,7 +14,7 @@ public interface AuditLogService {
 
     AuditLog create(AuditLog auditLog);
 
-    AuditLog update(AuditLog auditLog);
+    AuditLog update(UUID id, AuditLog auditLog);
 
     void deleteById(UUID id);
     

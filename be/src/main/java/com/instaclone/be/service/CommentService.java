@@ -14,7 +14,7 @@ public interface CommentService {
 
     Comment create(Comment comment);
 
-    Comment update(Comment comment);
+    Comment update(UUID id, Comment comment);
 
     void deleteById(UUID id);
     

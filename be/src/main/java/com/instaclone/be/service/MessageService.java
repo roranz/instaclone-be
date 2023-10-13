@@ -14,7 +14,7 @@ public interface MessageService {
 
     Message create(Message message);
 
-    Message update(Message message);
+    Message update(UUID id, Message message);
 
     void deleteById(UUID id);
     
