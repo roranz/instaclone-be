@@ -14,7 +14,7 @@ public interface PictureService {
 
     Picture create(Picture picture);
 
-    Picture update(Picture picture);
+    Picture update(UUID id, Picture picture);
 
     void deleteById(UUID id);
     

@@ -34,7 +34,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public UserRole update(UserRole userRole) {
+    public UserRole update(UUID id, UserRole userRole) {
         return userRoleRepository.save(userRole);
     }
 

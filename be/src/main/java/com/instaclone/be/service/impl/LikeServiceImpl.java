@@ -34,7 +34,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public Like update(Like like) {
+    public Like update(UUID id, Like like) {
         return likeRepository.save(like);
     }
 

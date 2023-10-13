@@ -14,7 +14,7 @@ public interface PictureTypeService {
 
     PictureType create(PictureType pictureType);
 
-    PictureType update(PictureType pictureType);
+    PictureType update(UUID id, PictureType pictureType);
 
     void deleteById(UUID id);
     

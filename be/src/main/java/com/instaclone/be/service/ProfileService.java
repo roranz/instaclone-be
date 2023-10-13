@@ -14,7 +14,7 @@ public interface ProfileService {
 
     Profile create(Profile profile);
 
-    Profile update(Profile profile);
+    Profile update(UUID id, Profile profile);
 
     void deleteById(UUID id);
 

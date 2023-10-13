@@ -34,7 +34,7 @@ public class AuditLogServiceImpl implements AuditLogService {
     }
 
     @Override
-    public AuditLog update(AuditLog auditLog) {
+    public AuditLog update(UUID id, AuditLog auditLog) {
         return auditLogRepository.save(auditLog);
     }
 

@@ -34,7 +34,7 @@ public class PictureTypeServiceImpl implements PictureTypeService {
   }
 
   @Override
-  public PictureType update(PictureType pictureType) {
+  public PictureType update(UUID id, PictureType pictureType) {
     return pictureTypeRepository.save(pictureType);
   }
 

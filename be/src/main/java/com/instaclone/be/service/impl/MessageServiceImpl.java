@@ -34,7 +34,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Message update(Message message) {
+    public Message update(UUID id, Message message) {
         return messageRepository.save(message);
     }
 
