@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.instaclone.be.dto.CommentDto;
-import com.instaclone.be.entities.AuditLog;
 import com.instaclone.be.entities.Comment;
 import com.instaclone.be.mappers.CommentMapper;
 import com.instaclone.be.service.CommentService;
@@ -34,7 +33,7 @@ public class CommentController {
 
     @GetMapping
     public ResponseEntity<List<CommentDto>> findAll() {
-         List<CommentDto> commentsDto = commentMapper.toListDto(commentService.findAll());
+        List<CommentDto> commentsDto = commentMapper.toListDto(commentService.findAll());
         return ResponseEntity.ok(commentsDto);
     }
 

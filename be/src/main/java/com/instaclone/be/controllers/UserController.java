@@ -1,7 +1,6 @@
 package com.instaclone.be.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -16,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.instaclone.be.dto.UserDto;
 import com.instaclone.be.entities.User;
+import com.instaclone.be.mappers.UserMapper;
 import com.instaclone.be.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,28 +29,31 @@ public class UserController {
 
     private final UserService userService;
 
+    private final UserMapper userMapper;
+
     @GetMapping
-    public ResponseEntity<List<User>> findAll() {
-        List<User> users = userService.findAll();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<UserDto>> findAll() {
+        List<UserDto> usersDto = userMapper.toListDto(userService.findAll());
+        return ResponseEntity.ok(usersDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable UUID id) throws NotFoundException {
-        Optional<User> user = userService.findById(id);
-        return user.map(ResponseEntity::ok).orElseThrow(() -> new NotFoundException());
+    public ResponseEntity<UserDto> findById(@PathVariable UUID id) throws NotFoundException {
+        User user = userService.findById(id).orElseThrow(() -> new NotFoundException());
+        UserDto userDto = userMapper.toDto(user);
+        return ResponseEntity.ok(userDto);
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
-        User createdUser = userService.create(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    public ResponseEntity<UserDto> create(@RequestBody UserDto userDto) {
+        User createdUser = userService.create(userMapper.fromDto(userDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(createdUser));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable UUID id, @RequestBody User user) {
-        User updatedUser = userService.update(id, user);
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<UserDto> update(@PathVariable UUID id, @RequestBody UserDto userDto) {
+        User updatedUser = userService.update(id, userMapper.fromDto(userDto));
+        return ResponseEntity.ok(userMapper.toDto(updatedUser));
     }
 
     @DeleteMapping("/{id}")

@@ -1,7 +1,6 @@
 package com.instaclone.be.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -16,40 +15,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.instaclone.be.dto.MessageDto;
 import com.instaclone.be.entities.Message;
+import com.instaclone.be.mappers.MessageMapper;
 import com.instaclone.be.service.MessageService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/messages/v1")
+@RequestMapping("/api/v1/messages")
 public class MessageController {
 
     private final MessageService messageService;
 
+    private final MessageMapper messageMapper;
+
     @GetMapping
-    public ResponseEntity<List<Message>> findAll() {
-        List<Message> messages = messageService.findAll();
-        return ResponseEntity.ok(messages);
+    public ResponseEntity<List<MessageDto>> findAll() {
+        List<MessageDto> messagesDto = messageMapper.toListDto(messageService.findAll());
+        return ResponseEntity.ok(messagesDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Message> findById(@PathVariable UUID id) throws NotFoundException {
-        Optional<Message> message = messageService.findById(id);
-        return message.map(ResponseEntity::ok).orElseThrow(() -> new NotFoundException());
+    public ResponseEntity<MessageDto> findById(@PathVariable UUID id) throws NotFoundException {
+        Message message = messageService.findById(id).orElseThrow(() -> new NotFoundException());
+        MessageDto messageDto = messageMapper.toDto(message);
+        return ResponseEntity.ok(messageDto);   
     }
 
     @PostMapping
-    public ResponseEntity<Message> create(@RequestBody Message message) {
-        Message createdMessage = messageService.create(message);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdMessage);
+    public ResponseEntity<MessageDto> create(@RequestBody MessageDto messageDto) {
+        Message createdMessage = messageService.create(messageMapper.fromDto(messageDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageMapper.toDto(createdMessage));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Message> update(@PathVariable UUID id, @RequestBody Message message) {
-        Message updatedMessage = messageService.update(id, message);
-        return ResponseEntity.ok(updatedMessage);
+    public ResponseEntity<MessageDto> update(@PathVariable UUID id, @RequestBody MessageDto messageDto) {
+        Message updatedMessage = messageService.update(id, messageMapper.fromDto(messageDto));
+        return ResponseEntity.ok(messageMapper.toDto(updatedMessage));
     }
 
     @DeleteMapping("/{id}")

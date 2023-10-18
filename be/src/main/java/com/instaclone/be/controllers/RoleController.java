@@ -3,7 +3,6 @@ package com.instaclone.be.controllers;
 import java.util.UUID;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -17,40 +16,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.instaclone.be.dto.RoleDto;
 import com.instaclone.be.entities.Role;
+import com.instaclone.be.mappers.RoleMapper;
 import com.instaclone.be.service.RoleService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/roles/v1")
+@RequestMapping("/api/v1/roles")
 public class RoleController {
     
     private final RoleService roleService;
 
+    private final RoleMapper roleMapper;
+
     @GetMapping
-    public ResponseEntity<List<Role>> findAll() {
-        List<Role> roles = roleService.findAll();
-        return ResponseEntity.ok(roles);
+    public ResponseEntity<List<RoleDto>> findAll() {
+        List<RoleDto> rolesDto = roleMapper.toListDto(roleService.findAll());
+        return ResponseEntity.ok(rolesDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Role> findById(@PathVariable UUID id) throws NotFoundException {
-        Optional<Role> role = roleService.findById(id);
-       return role.map(ResponseEntity::ok).orElseThrow(() -> new NotFoundException());
+    public ResponseEntity<RoleDto> findById(@PathVariable UUID id) throws NotFoundException {
+        Role role = roleService.findById(id).orElseThrow(() -> new NotFoundException());
+        RoleDto roleDto = roleMapper.toDto(role);
+        return ResponseEntity.ok(roleDto);
     }
 
     @PostMapping
-    public ResponseEntity<Role> create(@RequestBody Role role) {
-        Role createdRole = roleService.create(role);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdRole);
+    public ResponseEntity<RoleDto> create(@RequestBody RoleDto roleDto) {
+        Role createdRole = roleService.create(roleMapper.fromDto(roleDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(roleMapper.toDto(createdRole));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Role> update(@PathVariable UUID id, @RequestBody Role role) {
-        Role updatedRole = roleService.update(id, role);
-        return ResponseEntity.ok(updatedRole);
+    public ResponseEntity<RoleDto> update(@PathVariable UUID id, @RequestBody RoleDto roleDto) {
+        Role updatedRole = roleService.update(id, roleMapper.fromDto(roleDto));
+        return ResponseEntity.ok(roleMapper.toDto(updatedRole));
     }
 
     @DeleteMapping("/{id}")

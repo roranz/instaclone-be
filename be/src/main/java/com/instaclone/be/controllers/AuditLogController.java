@@ -23,7 +23,7 @@ import com.instaclone.be.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/audit-logs/v1")
+@RequestMapping("/api/v1/audit-logs")
 @RequiredArgsConstructor
 public class AuditLogController {
 
