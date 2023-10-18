@@ -1,7 +1,6 @@
 package com.instaclone.be.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -16,40 +15,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.instaclone.be.dto.PictureTypeDto;
 import com.instaclone.be.entities.PictureType;
+import com.instaclone.be.mappers.PictureTypeMapper;
 import com.instaclone.be.service.PictureTypeService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/picture-types/v1")
+@RequestMapping("/api/v1/picture-types")
 public class PictureTypeController {
     
-     private final PictureTypeService pictureTypeService;
+    private final PictureTypeService pictureTypeService;
+
+    private final PictureTypeMapper pictureTypeMapper;
 
     @GetMapping
-    public ResponseEntity<List<PictureType>> findAll() {
-        List<PictureType> pictureTypes = pictureTypeService.findAll();
-        return ResponseEntity.ok(pictureTypes);
+    public ResponseEntity<List<PictureTypeDto>> findAll() {
+        List<PictureTypeDto> pictureTypesDto = pictureTypeMapper.toListDto(pictureTypeService.findAll());
+        return ResponseEntity.ok(pictureTypesDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PictureType> findById(@PathVariable UUID id) throws NotFoundException {
-        Optional<PictureType> pictureType = pictureTypeService.findById(id);
-        return pictureType.map(ResponseEntity::ok).orElseThrow(() -> new NotFoundException());
+    public ResponseEntity<PictureTypeDto> findById(@PathVariable UUID id) throws NotFoundException {
+        PictureType pictureType = pictureTypeService.findById(id).orElseThrow(() -> new NotFoundException());
+        PictureTypeDto pictureTypeDto = pictureTypeMapper.toDto(pictureType);
+        return ResponseEntity.ok(pictureTypeDto);
     }
 
     @PostMapping
-    public ResponseEntity<PictureType> create(@RequestBody PictureType pictureType) {
-        PictureType createdPictureType = pictureTypeService.create(pictureType);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPictureType);
+    public ResponseEntity<PictureTypeDto> create(@RequestBody PictureTypeDto pictureTypeDto) {
+        PictureType createdPictureType = pictureTypeService.create(pictureTypeMapper.fromDto(pictureTypeDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(pictureTypeMapper.toDto(createdPictureType));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PictureType> update(@PathVariable UUID id, @RequestBody PictureType pictureType) {
-        PictureType updatedPictureType = pictureTypeService.update(id, pictureType);
-        return ResponseEntity.ok(updatedPictureType);
+    public ResponseEntity<PictureTypeDto> update(@PathVariable UUID id, @RequestBody PictureTypeDto pictureTypeDto) {
+        PictureType updatedPictureType = pictureTypeService.update(id, pictureTypeMapper.fromDto(pictureTypeDto));
+        return ResponseEntity.ok(pictureTypeMapper.toDto(updatedPictureType));
     }
 
     @DeleteMapping("/{id}")

@@ -1,7 +1,6 @@
 package com.instaclone.be.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -16,40 +15,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.instaclone.be.dto.ProfileDto;
 import com.instaclone.be.entities.Profile;
+import com.instaclone.be.mappers.ProfileMapper;
 import com.instaclone.be.service.ProfileService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/profiles/v1")
+@RequestMapping("/api/v1/profiles")
 public class ProfileController {
     
-     private final ProfileService profileService;
+    private final ProfileService profileService;
+
+    private final ProfileMapper profileMapper;
 
     @GetMapping
-    public ResponseEntity<List<Profile>> findAll() {
-        List<Profile> profiles = profileService.findAll();
-        return ResponseEntity.ok(profiles);
+    public ResponseEntity<List<ProfileDto>> findAll() {
+        List<ProfileDto> profilesDto = profileMapper.toListDto(profileService.findAll());
+        return ResponseEntity.ok(profilesDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Profile> findById(@PathVariable UUID id) throws NotFoundException {
-        Optional<Profile> profile = profileService.findById(id);
-        return profile.map(ResponseEntity::ok).orElseThrow(() -> new NotFoundException());
+    public ResponseEntity<ProfileDto> findById(@PathVariable UUID id) throws NotFoundException {
+        Profile profile = profileService.findById(id).orElseThrow(() -> new NotFoundException());
+        ProfileDto profileDto = profileMapper.toDto(profile);
+        return ResponseEntity.ok(profileDto);
     }
 
     @PostMapping
-    public ResponseEntity<Profile> create(@RequestBody Profile profile) {
-        Profile createdProfile = profileService.create(profile);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProfile);
+    public ResponseEntity<ProfileDto> create(@RequestBody ProfileDto profileDto) {
+        Profile createdProfile = profileService.create(profileMapper.fromDto(profileDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(profileMapper.toDto(createdProfile));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Profile> update(@PathVariable UUID id, @RequestBody Profile profile) {
-        Profile updatedProfile = profileService.update(id, profile);
-        return ResponseEntity.ok(updatedProfile);
+    public ResponseEntity<ProfileDto> update(@PathVariable UUID id, @RequestBody ProfileDto profileDto) {
+        Profile updatedProfile = profileService.update(id, profileMapper.fromDto(profileDto));
+        return ResponseEntity.ok(profileMapper.toDto(updatedProfile));
     }
 
     @DeleteMapping("/{id}")

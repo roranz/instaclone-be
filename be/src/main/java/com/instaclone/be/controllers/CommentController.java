@@ -1,7 +1,6 @@
 package com.instaclone.be.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -16,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.instaclone.be.dto.CommentDto;
 import com.instaclone.be.entities.Comment;
+import com.instaclone.be.mappers.CommentMapper;
 import com.instaclone.be.service.CommentService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,28 +29,31 @@ public class CommentController {
     
     private final CommentService commentService;
 
+    private final CommentMapper commentMapper;
+
     @GetMapping
-    public ResponseEntity<List<Comment>> findAll() {
-        List<Comment> comments = commentService.findAll();
-        return ResponseEntity.ok(comments);
+    public ResponseEntity<List<CommentDto>> findAll() {
+        List<CommentDto> commentsDto = commentMapper.toListDto(commentService.findAll());
+        return ResponseEntity.ok(commentsDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Comment> findById(@PathVariable UUID id) throws NotFoundException {
-        Optional<Comment> comment = commentService.findById(id);
-        return comment.map(ResponseEntity::ok).orElseThrow(() -> new NotFoundException());
+    public ResponseEntity<CommentDto> findById(@PathVariable UUID id) throws NotFoundException {
+        Comment comment = commentService.findById(id).orElseThrow(() -> new NotFoundException());
+        CommentDto commentDto = commentMapper.toDto(comment);
+        return ResponseEntity.ok(commentDto);
     }
 
     @PostMapping
-    public ResponseEntity<Comment> create(@RequestBody Comment comment) {
-        Comment createdComment = commentService.create(comment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
+    public ResponseEntity<CommentDto> create(@RequestBody CommentDto commentDto) {
+        Comment createdComment = commentService.create(commentMapper.fromDto(commentDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentMapper.toDto(createdComment));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Comment> update(@PathVariable UUID id, @RequestBody Comment comment) {
-        Comment updatedComment = commentService.update(id, comment);
-        return ResponseEntity.ok(updatedComment);
+    public ResponseEntity<CommentDto> update(@PathVariable UUID id, @RequestBody CommentDto commentDto) {
+        Comment updatedComment = commentService.update(id, commentMapper.fromDto(commentDto));
+        return ResponseEntity.ok(commentMapper.toDto(updatedComment));
     }
 
     @DeleteMapping("/{id}")

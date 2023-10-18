@@ -1,7 +1,6 @@
 package com.instaclone.be.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -16,40 +15,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.instaclone.be.dto.LikeDto;
 import com.instaclone.be.entities.Like;
+import com.instaclone.be.mappers.LikeMapper;
 import com.instaclone.be.service.LikeService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/likes/v1")
+@RequestMapping("/api/v1/likes")
 public class LikeController {
 
     private final LikeService likeService;
 
+    private final LikeMapper likeMapper;
+
     @GetMapping
-    public ResponseEntity<List<Like>> findAll() {
-        List<Like> likes = likeService.findAll();
-        return ResponseEntity.ok(likes);
+    public ResponseEntity<List<LikeDto>> findAll() {
+        List<LikeDto> likesDto = likeMapper.toListDto(likeService.findAll());
+        return ResponseEntity.ok(likesDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Like> findById(@PathVariable UUID id) throws NotFoundException {
-        Optional<Like> like = likeService.findById(id);
-        return like.map(ResponseEntity::ok).orElseThrow(() -> new NotFoundException());
+    public ResponseEntity<LikeDto> findById(@PathVariable UUID id) throws NotFoundException {
+        Like like = likeService.findById(id).orElseThrow(() -> new NotFoundException());
+        LikeDto likeDto = likeMapper.toDto(like);
+        return ResponseEntity.ok(likeDto);
     }
 
     @PostMapping
-    public ResponseEntity<Like> create(@RequestBody Like like) {
-        Like createdLike = likeService.create(like);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdLike);
+    public ResponseEntity<LikeDto> create(@RequestBody LikeDto likeDto) {
+        Like createdLike = likeService.create(likeMapper.fromDto(likeDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(likeMapper.toDto(createdLike));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Like> update(@PathVariable UUID id, @RequestBody Like like) {
-        Like updatedLike = likeService.update(id, like);
-        return ResponseEntity.ok(updatedLike);
+    public ResponseEntity<LikeDto> update(@PathVariable UUID id, @RequestBody LikeDto likeDto) {
+        Like updatedLike = likeService.update(id, likeMapper.fromDto(likeDto));
+        return ResponseEntity.ok(likeMapper.toDto(updatedLike));
     }
 
     @DeleteMapping("/{id}")
