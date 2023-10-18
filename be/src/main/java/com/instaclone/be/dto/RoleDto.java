@@ -1,7 +1,6 @@
 package com.instaclone.be.dto;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 import lombok.Data;
@@ -16,7 +15,5 @@ public class RoleDto {
     private ZonedDateTime insertTimestamp;
     
     private ZonedDateTime updateTimestamp;
-
-    private Set<UserRoleDto> userRoles;
     
 }
